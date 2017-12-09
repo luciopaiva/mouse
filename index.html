@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mouse Test</title>
+
+    <style>
+        body {
+            padding: 0;
+            margin: 20px;
+
+            background-color: black;
+            color: white;
+            font-family: sans-serif;
+            cursor: crosshair;
+            overflow: hidden;
+            user-select: none;  /* prevent text selection while clicking - https://stackoverflow.com/a/4407335/778272 */
+        }
+
+        #circle {
+            --radius: 50px;
+            --border-width: 8px;
+            --diameter: calc(2 * (var(--radius) - var(--border-width)));
+
+            position: fixed;
+            padding: 0;
+            margin: 0;
+            width: var(--diameter);
+            height: var(--diameter);
+            border: var(--border-width) #ffbc45 solid;
+            border-radius: var(--radius);
+        }
+
+        .active-left {
+            background-color: red;
+        }
+
+        .active-middle {
+            background-color: green;
+        }
+
+        .active-right {
+            background-color: blue;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Mouse test</h1>
+<p>Simple app to test malfunctioning mouses.</p>
+
+<div id="circle" class=""></div>
+
+</body>
+
+<script>
+    const circle = document.getElementById("circle");
+    const circleRadius = parseInt(window.getComputedStyle(circle).getPropertyValue("--radius"));
+
+    document.addEventListener("mousemove", event => {
+        const x = event.pageX - circleRadius;
+        const y = event.pageY - circleRadius;
+
+        circle.style.left = x.toString() + "px";
+        circle.style.top = y.toString() + "px";
+    });
+
+    document.addEventListener("mousedown", event => {
+        switch (event.button) {
+            case 0: circle.classList.add("active-left"); break;
+            case 1: circle.classList.add("active-middle"); break;
+            case 2: circle.classList.add("active-right"); break;
+        }
+    });
+
+    document.addEventListener("mouseup", () => {
+        circle.classList.remove("active-left", "active-right", "active-middle");
+    });
+
+    // prevent right-click menu from appearing
+    document.addEventListener("contextmenu", event => event.preventDefault());
+</script>
+
+</html>
