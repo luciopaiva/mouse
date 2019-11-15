@@ -1,6 +1,6 @@
 
 # Simple mouse test app
 
-Simple app to test malfunctioning mouses.
+Simple online app to test malfunctioning mouses.
 
-[Live app here](http://luciopaiva.com/mouse)
+[Live app here](https://luciopaiva.com/mouse)
