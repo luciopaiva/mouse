@@ -65,6 +65,7 @@
 
 <h1>Mouse test</h1>
 <p>Simple app to test malfunctioning mouses.</p>
+<p>Press F12 to open Console and see the log.</p>
 
 <div id="circle" class=""></div>
 
@@ -73,6 +74,15 @@
 <script>
     const circle = document.getElementById("circle");
     const circleRadius = parseInt(window.getComputedStyle(circle).getPropertyValue("--radius"));
+    const buttonNames =
+    [
+        '[1] Left',
+        '[3] Middle',
+        '[2] Right',
+        '[4] Back',
+        '[5] Forward',
+    ];
+    const lastClick = [];
 
     document.addEventListener("mousemove", event => {
         const x = event.pageX - circleRadius;
@@ -86,6 +96,15 @@
         circle.classList.add(`active-${event.button}`);
 
         event.preventDefault();
+
+        const diff = performance.now() - lastClick[event.button];
+        const bad = diff < 200;
+        const name = buttonNames[event.button] || `Button ${event.button}`;
+        console.log(
+            `%c${name} DOWN - Since down: ${diff.toFixed(2)}ms`,
+            bad ? 'background: red; color: #fff' : ''
+        );
+        lastClick[event.button] = performance.now();
     });
 
     document.addEventListener("mouseup", () => {
@@ -93,6 +112,14 @@
 
         // prevent navigating when clicking back or forward
         event.preventDefault();
+
+        const diff = performance.now() - lastClick[event.button];
+        const bad = diff < 200;
+        const name = buttonNames[event.button] || `Button ${event.button}`;
+        console.log(
+            `%c${name} UP   - Since down: ${diff.toFixed(2)}ms`,
+            bad ? 'background: red; color: #fff' : ''
+        );
     });
 
     // prevent right-click menu from appearing
