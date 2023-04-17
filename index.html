@@ -31,16 +31,24 @@
             border-radius: var(--radius);
         }
 
-        .active-left {
-            background-color: red;
-        }
-
-        .active-middle {
+        .active-0 {
             background-color: green;
         }
 
-        .active-right {
+        .active-1 {
+            background-color: red;
+        }
+
+        .active-2 {
             background-color: blue;
+        }
+
+        .active-3 {
+            background-color: purple;
+        }
+
+        .active-4 {
+            background-color: orange;
         }
     </style>
 
@@ -75,15 +83,16 @@
     });
 
     document.addEventListener("mousedown", event => {
-        switch (event.button) {
-            case 0: circle.classList.add("active-left"); break;
-            case 1: circle.classList.add("active-middle"); break;
-            case 2: circle.classList.add("active-right"); break;
-        }
+        circle.classList.add(`active-${event.button}`);
+
+        event.preventDefault();
     });
 
     document.addEventListener("mouseup", () => {
-        circle.classList.remove("active-left", "active-right", "active-middle");
+        circle.classList.remove(`active-${event.button}`);
+
+        // prevent navigating when clicking back or forward
+        event.preventDefault();
     });
 
     // prevent right-click menu from appearing
