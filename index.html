@@ -83,6 +83,23 @@
         '[5] Forward',
     ];
     const lastClick = [];
+    let lastWheel = null;
+
+    document.addEventListener("mousewheel", event => {
+        const diff = performance.now() - lastWheel;
+
+        if (event.deltaX !== 0) {
+            console.log(`Horizontal Scroll ${event.deltaX} - Time since last scroll: ${diff.toFixed(2)}ms`);
+        }
+        else if (event.deltaY !== 0) {
+            console.log(`Vertical Scroll ${event.deltaY} - Time since last scroll: ${diff.toFixed(2)}ms`);
+        }
+        else {
+            console.log(`Unknown Scroll Event - Time since last scroll: ${diff.toFixed(2)}ms`);
+        }
+
+        lastWheel = performance.now();
+    });
 
     document.addEventListener("mousemove", event => {
         const x = event.pageX - circleRadius;
