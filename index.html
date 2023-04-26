@@ -29,6 +29,7 @@
             height: var(--diameter);
             border: var(--border-width) #ffbc45 solid;
             border-radius: var(--radius);
+            background-repeat: no-repeat;
         }
 
         .active-0 {
@@ -49,6 +50,22 @@
 
         .active-4 {
             background-color: orange;
+        }
+
+        .scroll-up {
+            background-image: linear-gradient(to bottom, #fff 20%, #fff var(--border-width), transparent var(--border-width), transparent 100%);
+        }
+
+        .scroll-bottom {
+            background-image: linear-gradient(to top, #fff 20%, #fff var(--border-width), transparent var(--border-width), transparent 100%);
+        }
+
+        .scroll-left {
+            background-image: linear-gradient(to right, #fff 20%, #fff var(--border-width), transparent var(--border-width), transparent 100%);
+        }
+
+        .scroll-right {
+            background-image: linear-gradient(to left, #fff 20%, #fff var(--border-width), transparent var(--border-width), transparent 100%);
         }
     </style>
 
@@ -84,21 +101,37 @@
     ];
     const lastClick = [];
     let lastWheel = null;
+    let scrollTimeout;
 
-    document.addEventListener("mousewheel", event => {
+    document.addEventListener("wheel", event => {
         const diff = performance.now() - lastWheel;
-
-        if (event.deltaX !== 0) {
-            console.log(`Horizontal Scroll ${event.deltaX} - Time since last scroll: ${diff.toFixed(2)}ms`);
-        }
-        else if (event.deltaY !== 0) {
-            console.log(`Vertical Scroll ${event.deltaY} - Time since last scroll: ${diff.toFixed(2)}ms`);
-        }
-        else {
-            console.log(`Unknown Scroll Event - Time since last scroll: ${diff.toFixed(2)}ms`);
-        }
-
         lastWheel = performance.now();
+
+        if (event.deltaX > 0) {
+            console.log(`Horizontal Scroll Right ${event.deltaX} - Time since last scroll: ${diff.toFixed(2)}ms`);
+            circle.classList.add("scroll-right");
+        }
+
+        if (event.deltaX < 0) {
+            console.log(`Horizontal Scroll Left ${event.deltaX} - Time since last scroll: ${diff.toFixed(2)}ms`);
+            circle.classList.add("scroll-left");
+        }
+
+        if (event.deltaY > 0) {
+            console.log(`Vertical Scroll Down ${event.deltaY} - Time since last scroll: ${diff.toFixed(2)}ms`);
+            circle.classList.add("scroll-bottom");
+        }
+
+        if (event.deltaY < 0) {
+            console.log(`Vertical Scroll Up ${event.deltaY} - Time since last scroll: ${diff.toFixed(2)}ms`);
+            circle.classList.add("scroll-up");
+        }
+
+        clearTimeout(scrollTimeout);
+
+        scrollTimeout = setTimeout(() => {
+            circle.classList.remove("scroll-right", "scroll-left", "scroll-bottom", "scroll-up");
+        }, 100);
     });
 
     document.addEventListener("mousemove", event => {
