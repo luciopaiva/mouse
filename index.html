@@ -108,22 +108,22 @@
         lastWheel = performance.now();
 
         if (event.deltaX > 0) {
-            console.log(`Horizontal Scroll Right ${event.deltaX} - Time since last scroll: ${diff.toFixed(2)}ms`);
+            console.log(`Horizontal Scroll RIGHT  ${event.deltaX} - Time since last scroll: ${diff.toFixed(2)}ms`);
             circle.classList.add("scroll-right");
         }
 
         if (event.deltaX < 0) {
-            console.log(`Horizontal Scroll Left ${event.deltaX} - Time since last scroll: ${diff.toFixed(2)}ms`);
+            console.log(`Horizontal Scroll LEFT  ${event.deltaX} - Time since last scroll: ${diff.toFixed(2)}ms`);
             circle.classList.add("scroll-left");
         }
 
         if (event.deltaY > 0) {
-            console.log(`Vertical Scroll Down ${event.deltaY} - Time since last scroll: ${diff.toFixed(2)}ms`);
+            console.log(`Vertical Scroll DOWN  ${event.deltaY} - Time since last scroll: ${diff.toFixed(2)}ms`);
             circle.classList.add("scroll-bottom");
         }
 
         if (event.deltaY < 0) {
-            console.log(`Vertical Scroll Up ${event.deltaY} - Time since last scroll: ${diff.toFixed(2)}ms`);
+            console.log(`Vertical Scroll UP   ${event.deltaY} - Time since last scroll: ${diff.toFixed(2)}ms`);
             circle.classList.add("scroll-up");
         }
 
@@ -147,33 +147,38 @@
 
         event.preventDefault();
 
-        const diff = performance.now() - lastClick[event.button];
-        const bad = diff < 200;
-        const name = buttonNames[event.button] || `Button ${event.button}`;
-        console.log(
-            `%c${name} DOWN - Since down: ${diff.toFixed(2)}ms`,
-            bad ? 'background: red; color: #fff' : ''
-        );
+        printLog('DOWN');
+
         lastClick[event.button] = performance.now();
     });
 
-    document.addEventListener("mouseup", () => {
+    document.addEventListener("mouseup", event => {
         circle.classList.remove(`active-${event.button}`);
 
         // prevent navigating when clicking back or forward
         event.preventDefault();
 
-        const diff = performance.now() - lastClick[event.button];
-        const bad = diff < 200;
-        const name = buttonNames[event.button] || `Button ${event.button}`;
-        console.log(
-            `%c${name} UP   - Since down: ${diff.toFixed(2)}ms`,
-            bad ? 'background: red; color: #fff' : ''
-        );
+        printLog('UP  ');
     });
 
     // prevent right-click menu from appearing
     document.addEventListener("contextmenu", event => event.preventDefault());
+
+    function printLog(type) {
+        const name = buttonNames[event.button] || `Button ${event.button}`;
+
+        if (!(event.button in lastClick)) {
+            console.log(`${name} ${type}`);
+            return;
+        }
+
+        const diff = performance.now() - lastClick[event.button];
+        const highlight = diff < 200;
+        console.log(
+            `%c${name} ${type} - Time since button down: ${diff.toFixed(2)}ms`,
+            highlight ? 'background: red; color: #fff' : ''
+        );
+    }
 </script>
 
 </html>
