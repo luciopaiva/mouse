@@ -29,18 +29,43 @@
             height: var(--diameter);
             border: var(--border-width) #ffbc45 solid;
             border-radius: var(--radius);
+            background-repeat: no-repeat;
         }
 
-        .active-left {
-            background-color: red;
-        }
-
-        .active-middle {
+        .active-0 {
             background-color: green;
         }
 
-        .active-right {
+        .active-1 {
+            background-color: red;
+        }
+
+        .active-2 {
             background-color: blue;
+        }
+
+        .active-3 {
+            background-color: purple;
+        }
+
+        .active-4 {
+            background-color: orange;
+        }
+
+        .scroll-up {
+            background-image: linear-gradient(to bottom, #fff 20%, #fff var(--border-width), transparent var(--border-width), transparent 100%);
+        }
+
+        .scroll-bottom {
+            background-image: linear-gradient(to top, #fff 20%, #fff var(--border-width), transparent var(--border-width), transparent 100%);
+        }
+
+        .scroll-left {
+            background-image: linear-gradient(to right, #fff 20%, #fff var(--border-width), transparent var(--border-width), transparent 100%);
+        }
+
+        .scroll-right {
+            background-image: linear-gradient(to left, #fff 20%, #fff var(--border-width), transparent var(--border-width), transparent 100%);
         }
     </style>
 
@@ -57,6 +82,7 @@
 
 <h1>Mouse test</h1>
 <p>Simple app to test malfunctioning mouses.</p>
+<p>Press F12 to open Console and see the log.</p>
 
 <div id="circle" class=""></div>
 
@@ -65,6 +91,48 @@
 <script>
     const circle = document.getElementById("circle");
     const circleRadius = parseInt(window.getComputedStyle(circle).getPropertyValue("--radius"));
+    const buttonNames =
+    [
+        '[1] Left',
+        '[3] Middle',
+        '[2] Right',
+        '[4] Back',
+        '[5] Forward',
+    ];
+    const lastClick = [];
+    let lastWheel = null;
+    let scrollTimeout;
+
+    document.addEventListener("wheel", event => {
+        const diff = performance.now() - lastWheel;
+        lastWheel = performance.now();
+
+        if (event.deltaX > 0) {
+            console.log(`Horizontal Scroll RIGHT  ${event.deltaX} - Time since last scroll: ${diff.toFixed(2)}ms`);
+            circle.classList.add("scroll-right");
+        }
+
+        if (event.deltaX < 0) {
+            console.log(`Horizontal Scroll LEFT  ${event.deltaX} - Time since last scroll: ${diff.toFixed(2)}ms`);
+            circle.classList.add("scroll-left");
+        }
+
+        if (event.deltaY > 0) {
+            console.log(`Vertical Scroll DOWN  ${event.deltaY} - Time since last scroll: ${diff.toFixed(2)}ms`);
+            circle.classList.add("scroll-bottom");
+        }
+
+        if (event.deltaY < 0) {
+            console.log(`Vertical Scroll UP   ${event.deltaY} - Time since last scroll: ${diff.toFixed(2)}ms`);
+            circle.classList.add("scroll-up");
+        }
+
+        clearTimeout(scrollTimeout);
+
+        scrollTimeout = setTimeout(() => {
+            circle.classList.remove("scroll-right", "scroll-left", "scroll-bottom", "scroll-up");
+        }, 100);
+    });
 
     document.addEventListener("mousemove", event => {
         const x = event.pageX - circleRadius;
@@ -75,19 +143,42 @@
     });
 
     document.addEventListener("mousedown", event => {
-        switch (event.button) {
-            case 0: circle.classList.add("active-left"); break;
-            case 1: circle.classList.add("active-middle"); break;
-            case 2: circle.classList.add("active-right"); break;
-        }
+        circle.classList.add(`active-${event.button}`);
+
+        event.preventDefault();
+
+        printLog('DOWN');
+
+        lastClick[event.button] = performance.now();
     });
 
-    document.addEventListener("mouseup", () => {
-        circle.classList.remove("active-left", "active-right", "active-middle");
+    document.addEventListener("mouseup", event => {
+        circle.classList.remove(`active-${event.button}`);
+
+        // prevent navigating when clicking back or forward
+        event.preventDefault();
+
+        printLog('UP  ');
     });
 
     // prevent right-click menu from appearing
     document.addEventListener("contextmenu", event => event.preventDefault());
+
+    function printLog(type) {
+        const name = buttonNames[event.button] || `Button ${event.button}`;
+
+        if (!(event.button in lastClick)) {
+            console.log(`${name} ${type}`);
+            return;
+        }
+
+        const diff = performance.now() - lastClick[event.button];
+        const highlight = diff < 200;
+        console.log(
+            `%c${name} ${type} - Time since button down: ${diff.toFixed(2)}ms`,
+            highlight ? 'background: red; color: #fff' : ''
+        );
+    }
 </script>
 
 </html>
