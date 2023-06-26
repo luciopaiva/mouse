@@ -89,6 +89,7 @@
 </body>
 
 <script>
+    const HIGHLIGHT_THRESHOLD_IN_MS = 200;
     const circle = document.getElementById("circle");
     const circleRadius = parseInt(window.getComputedStyle(circle).getPropertyValue("--radius"));
     const buttonNames =
@@ -99,7 +100,7 @@
         '[4] Back',
         '[5] Forward',
     ];
-    const lastClick = [];
+    const previousMouseDownTime = {};
     let lastWheel = null;
     let scrollTimeout;
 
@@ -149,7 +150,7 @@
 
         printLog('DOWN', event.button);
 
-        lastClick[event.button] = performance.now();
+        previousMouseDownTime[event.button] = performance.now();
     });
 
     document.addEventListener("mouseup", event => {
@@ -166,18 +167,17 @@
 
     function printLog(type, button) {
         const name = buttonNames[button] || `Button ${button}`;
+        const description = `${name} ${type}`;
 
-        if (!(button in lastClick)) {
-            console.log(`${name} ${type}`);
+        if (!previousMouseDownTime[button]) {
+            console.log(description);
             return;
         }
 
-        const diff = performance.now() - lastClick[button];
-        const highlight = diff < 200;
-        console.log(
-            `%c${name} ${type} - Time since button down: ${diff.toFixed(2)}ms`,
-            highlight ? 'background: red; color: #fff' : ''
-        );
+        const elapsed = performance.now() - previousMouseDownTime[button];
+        const shouldHighlight = elapsed < HIGHLIGHT_THRESHOLD_IN_MS;
+        const timeSince = `Time since button down: ${elapsed.toFixed(2)}ms`;
+        console.log(`%c${description} - ${timeSince}`, shouldHighlight ? 'background: red; color: #fff' : '');
     }
 </script>
 
