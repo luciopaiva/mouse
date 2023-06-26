@@ -147,7 +147,7 @@
 
         event.preventDefault();
 
-        printLog('DOWN');
+        printLog('DOWN', event.button);
 
         lastClick[event.button] = performance.now();
     });
@@ -158,21 +158,21 @@
         // prevent navigating when clicking back or forward
         event.preventDefault();
 
-        printLog('UP  ');
+        printLog('UP  ', event.button);
     });
 
     // prevent right-click menu from appearing
     document.addEventListener("contextmenu", event => event.preventDefault());
 
-    function printLog(type) {
-        const name = buttonNames[event.button] || `Button ${event.button}`;
+    function printLog(type, button) {
+        const name = buttonNames[button] || `Button ${button}`;
 
-        if (!(event.button in lastClick)) {
+        if (!(button in lastClick)) {
             console.log(`${name} ${type}`);
             return;
         }
 
-        const diff = performance.now() - lastClick[event.button];
+        const diff = performance.now() - lastClick[button];
         const highlight = diff < 200;
         console.log(
             `%c${name} ${type} - Time since button down: ${diff.toFixed(2)}ms`,
